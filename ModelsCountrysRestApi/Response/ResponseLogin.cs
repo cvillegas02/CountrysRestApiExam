@@ -6,7 +6,7 @@ namespace ModelsCountrysRestApi.Response
 {
     public class ResponseLogin
     {
-        public string Token { get; set; }
-        public int ExpireDate { get; set; }
+        public string token { get; set; }
+        public int expire_date { get; set; }
     }
 }

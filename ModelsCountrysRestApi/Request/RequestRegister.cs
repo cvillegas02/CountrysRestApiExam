@@ -6,10 +6,7 @@ namespace ModelsCountrysRestApi.Request
 {
     public class RequestRegister
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string Nombre { get; set; }
-        public string Apellidos { get; set; }
-        public string Departamento { get; set; }
+        public string email { get; set; }
+        public string password { get; set; }
     }
 }
