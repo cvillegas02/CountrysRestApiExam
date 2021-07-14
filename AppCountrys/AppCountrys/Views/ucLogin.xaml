@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="AppCountrys.Views.ucLogin">
+    <ContentPage.Content>
+        <Grid Margin="0,20,0,0"
+          RowSpacing="20"
+          >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!--Inicio Titulo login-->
+            <Label Text="Inicia sesión"      
+               HorizontalOptions="Center"
+               FontSize="Large" />
+            <!--Fin Titulo login-->
+            <StackLayout Grid.Row="1"   
+                         Spacing="20"
+                         Margin="20,0,20,0" >
+                <StackLayout>
+                    <Label Text="Correo Electrónico*"
+                           TextColor="#7D7D7D"
+                           FontSize="Small" />
+                    <!-- Inicio Entry Correo electronico-->
+
+                    <Frame 
+                           CornerRadius="10"                   
+                           Padding="10,0,0,0"
+                           HasShadow="False"
+                           VerticalOptions="Center"
+                           HeightRequest="50" >
+                        <Entry Placeholder="Ingresa tu Correo Electrónico"
+                                               x:Name="entryUsuario"
+                                               FontSize="Micro"
+                                               Text="{Binding User}"
+                                               Keyboard="Email" />
+                    </Frame>
+                    <!-- Fin Entry Correo electronico -->
+                    <Label Text="Contraseña*"
+                       TextColor="#7D7D7D"
+                       FontSize="Small" />
+                    <!-- Inicio Entry Contraseña -->
+                    <Frame 
+                           CornerRadius="10"                   
+                           Padding="10,0,0,0"
+                           HasShadow="False"
+                           VerticalOptions="Center"
+                           HeightRequest="50" >
+                        <Entry Placeholder="Ingresa tu Contraseña"
+                                           x:Name="entryPassword"
+                                           FontSize="Micro"
+                                           Keyboard="Text"
+                                           Text="{Binding Password}"
+                                           IsPassword="True"/>
+                    </Frame>
+                    <!-- Fin Entry  Contraseña -->
+
+                </StackLayout>
+               
+
+                <!-- Inicio Boton Login -->
+                <Button 
+                        Text="Iniciar sesión"
+                        Command="{Binding IniciarSeccionCommand}"
+                        CornerRadius="10"
+                        Padding="15"
+                        FontSize="Small"
+                        Margin="60,0,60,0"
+                        TextColor="White"/>
+                <!-- Fin Boton Login -->
+
+             
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

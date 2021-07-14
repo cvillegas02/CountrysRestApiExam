@@ -29,7 +29,12 @@ namespace CountrysRestApi.DB
         {
             if (!optionsBuilder.IsConfigured)
             {
+#if DEBUG
                 optionsBuilder.UseMySql(Configuration.CONNECTION_BD_MYSQL_LOCAL_HOST);
+#elif RELEASE
+                    optionsBuilder.UseMySql(Configuration.CONNECTION_BD_MYSQL_DEV);
+#endif
+                
             }
         }
 
