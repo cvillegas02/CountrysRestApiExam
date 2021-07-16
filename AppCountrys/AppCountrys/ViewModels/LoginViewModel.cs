@@ -18,7 +18,7 @@ namespace AppCountrys.ViewModels
     {
         #region Propertys
 
-        private string user = "cvillegas2@hotmail.es";
+        private string user = "";
 
         public string User
         {
@@ -27,7 +27,7 @@ namespace AppCountrys.ViewModels
             set { user = value; OnPropertyChanged("Usuario"); }
         }
 
-        private string password = "Abcd1234";
+        private string password = "";
 
         public string Password
         {
