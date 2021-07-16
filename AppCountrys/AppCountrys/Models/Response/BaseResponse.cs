@@ -4,6 +4,10 @@ using System.Text;
 
 namespace AppCountrys.Models.Response
 {
+    /// <summary>
+    /// Response Base de los Servicios Rest Api
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class BaseResponse<T>
     {
         public bool status { get; set; }

@@ -11,9 +11,12 @@ using AppCountrys.Models.ModelsDB;
 
 namespace AppCountrys.ViewModels
 {
+    /// <summary>
+    /// Base de MVVM para las clases
+    /// </summary>
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Country> DataStore => DependencyService.Get<IDataStore<Country>>();
+        public IRestClient ServicesRestApi => DependencyService.Get<IRestClient>();
 
         bool isBusy = false;
         public bool IsBusy

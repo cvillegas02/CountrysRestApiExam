@@ -4,6 +4,9 @@ using System.Text;
 
 namespace AppCountrys.Models.Request
 {
+    /// <summary>
+    /// Request de Inicio de Sesion
+    /// </summary>
     public class RequestLogin
     {
         public string email { get; set; }

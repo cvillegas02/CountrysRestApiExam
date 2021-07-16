@@ -1,4 +1,5 @@
 ﻿using AppCountrys.Models;
+using AppCountrys.Models.Enumerator;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,8 +20,8 @@ namespace AppCountrys.Views
 
             menuItems = new List<HomeMenuItem>
             {
-                new HomeMenuItem {Id = MenuItemType.Browse, Title="Browse" },
-                new HomeMenuItem {Id = MenuItemType.About, Title="About" }
+                new HomeMenuItem {Id = MenuItemType.Country, Title="Countries" },
+                new HomeMenuItem {Id = MenuItemType.Configuration, Title="Configuration" }
             };
 
             ListViewMenu.ItemsSource = menuItems;

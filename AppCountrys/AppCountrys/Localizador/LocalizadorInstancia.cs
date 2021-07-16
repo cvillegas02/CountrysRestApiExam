@@ -5,6 +5,9 @@ using System.Text;
 
 namespace AppCountrys.Localizador
 {
+    /// <summary>
+    /// Clase singleton Localizador de las clases MVVM
+    /// </summary>
     public class LocalizadorInstancia
     {
         static LocalizadorInstancia defaultInstance = new LocalizadorInstancia();
@@ -62,5 +65,43 @@ namespace AppCountrys.Localizador
                 newCountryVM = value;
             }
         }
+
+
+        DetailCountryViewModel detailCountryVM { get; set; }
+        public DetailCountryViewModel _detailCountryVM
+        {
+            get
+            {
+                if (detailCountryVM == null)
+                {
+                    detailCountryVM = new DetailCountryViewModel();
+
+                }
+                return detailCountryVM;
+            }
+            set
+            {
+                detailCountryVM = value;
+            }
+        }
+
+        CountriesViewModel countriesVM { get; set; }
+        public CountriesViewModel _countriesVM
+        {
+            get
+            {
+                if (countriesVM == null)
+                {
+                    countriesVM = new CountriesViewModel();
+
+                }
+                return countriesVM;
+            }
+            set
+            {
+                countriesVM = value;
+            }
+        }
+        
     }
 }

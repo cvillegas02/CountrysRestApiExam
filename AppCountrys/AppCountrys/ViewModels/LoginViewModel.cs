@@ -1,4 +1,6 @@
-﻿using AppCountrys.Models.Request;
+﻿using AppCountrys.Helpers;
+using AppCountrys.Models.Request;
+using AppCountrys.Models.Response;
 using AppCountrys.Services;
 using AppCountrys.Views;
 using System;
@@ -9,38 +11,41 @@ using Xamarin.Forms;
 
 namespace AppCountrys.ViewModels
 {
+    /// <summary>
+    /// ViewModel de la pantalla para iniciar sesion
+    /// </summary>
     public class LoginViewModel : BaseViewModel
     {
         #region Propertys
 
-        private string _User = "cvillegas2@hotmail.es";
+        private string user = "cvillegas2@hotmail.es";
 
         public string User
         {
-            get { return _User; }
+            get { return user; }
 
-            set { _User = value; OnPropertyChanged("Usuario"); }
+            set { user = value; OnPropertyChanged("Usuario"); }
         }
 
-        private string _Password = "Abcd1234";
+        private string password = "Abcd1234";
 
         public string Password
         {
-            get { return _Password; }
+            get { return password; }
 
-            set { _Password = value; OnPropertyChanged("Password"); }
+            set { password = value; OnPropertyChanged("Password"); }
         }
 
         #endregion
 
         #region Commands
 
-        public ICommand IniciarSeccionCommand
+        public ICommand LoginCommand
         {
-            get { return new Command(IniciarSeccion); }
+            get { return new Command(UserLogin); }
         }
 
-        public async void IniciarSeccion()
+        public async void UserLogin()
         {
 
             if (string.IsNullOrWhiteSpace(User))
@@ -60,17 +65,16 @@ namespace AppCountrys.ViewModels
             
             try
             {
-                //se crea el usuer request
-
+                //se crea el user request
                 RequestLogin request = new RequestLogin { email = this.User, password = this.Password };
-                
-                var res = await ServiceRestApi.DefaultServicio.ValidaUsuarioContrasena(request);
+
+                var res = await ServicesRestApi.PostAsync<BaseResponse<ResponseLogin>>(ConfigurationString.URL_LOGIN, request, false);
                 if (res != null && res.status)
                 {
                     
                     if (! string.IsNullOrWhiteSpace(res.data.token))
                     {
-                        ServiceRestApi.DefaultServicio.Token = res.data.token;
+                        DependencyService.Get<IRestClient>().Token = res.data.token;
                         App.Current.MainPage = new MainPage();
                     }
                     else

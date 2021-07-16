@@ -4,6 +4,9 @@ using System.Text;
 
 namespace AppCountrys.Models.ModelsDB
 {
+    /// <summary>
+    /// Modelo de usuario
+    /// </summary>
     public class User
     {
         public int id { get; set; }

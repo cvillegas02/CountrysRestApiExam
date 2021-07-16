@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace AppCountrys.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ucLogin : ContentPage
+    public partial class LoginPage : ContentPage
     {
-        public ucLogin()
+        public LoginPage()
         {
             InitializeComponent();
             this.BindingContext = LocalizadorInstancia.DefaultServicio._loginVM;

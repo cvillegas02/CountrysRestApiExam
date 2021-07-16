@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace AppCountrys.Services
 {
+    /// <summary>
+    /// Servicio de Mensaje
+    /// </summary>
     public class ServiceMessage
     {
         static ServiceMessage defaultInstance = new ServiceMessage();
