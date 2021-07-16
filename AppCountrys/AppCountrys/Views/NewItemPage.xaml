@@ -3,23 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:AppCountrys.Resx"
              mc:Ignorable="d"
              x:Class="AppCountrys.Views.NewItemPage"
-             Title="New Item">
+             Title="{x:Static resources:AppResources.Title_New_Country}">
     
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Cancel" Clicked="Cancel_Clicked" />
-        <ToolbarItem Text="Save" Clicked="Save_Clicked" />
+        <ToolbarItem Text="Cancel" Command="{Binding CancelCommand}" />
+        <ToolbarItem Text="Save"  Command="{Binding SaveCountryCommand}" />
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
         <StackLayout Spacing="20" Padding="15">
             <Label Text="Alpha" FontSize="Medium" />
-            <Entry Text="{Binding Alpha}" FontSize="Small" />
+            <Entry Text="{Binding Alpha}" FontSize="Small" MaxLength="2"/>
             <Label Text="Name" FontSize="Medium" />
-            <Entry Text="{Binding Name}" FontSize="Small" Margin="0" />
+            <Entry Text="{Binding Name}" FontSize="Small" Margin="0" MaxLength="50"/>
             <Label Text="Numeric Code" FontSize="Medium" />
-            <Entry Text="{Binding Code}" FontSize="Small" />
+            <Entry Text="{Binding Code}" FontSize="Small" MaxLength="5" Keyboard="Numeric"/>
             
         </StackLayout>
     </ContentPage.Content>

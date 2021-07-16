@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:AppCountrys.Resx"
              mc:Ignorable="d"
-             x:Class="AppCountrys.Views.ucLogin">
+             x:Class="AppCountrys.Views.LoginPage">
     <ContentPage.Content>
         <Grid Margin="0,20,0,0"
           RowSpacing="20"
@@ -14,7 +15,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <!--Inicio Titulo login-->
-            <Label Text="Inicia sesión"      
+            <Label Text="{x:Static resources:AppResources.Title_Login}"      
                HorizontalOptions="Center"
                FontSize="Large" />
             <!--Fin Titulo login-->
@@ -22,7 +23,7 @@
                          Spacing="20"
                          Margin="20,0,20,0" >
                 <StackLayout>
-                    <Label Text="Correo Electrónico*"
+                    <Label Text="{x:Static resources:AppResources.Email}"
                            TextColor="#7D7D7D"
                            FontSize="Small" />
                     <!-- Inicio Entry Correo electronico-->
@@ -33,7 +34,7 @@
                            HasShadow="False"
                            VerticalOptions="Center"
                            HeightRequest="50" >
-                        <Entry Placeholder="Ingresa tu Correo Electrónico"
+                        <Entry Placeholder="{x:Static resources:AppResources.Placeholder_Email}"
                                                x:Name="entryUsuario"
                                                FontSize="Micro"
                                                Text="{Binding User}"
@@ -50,7 +51,7 @@
                            HasShadow="False"
                            VerticalOptions="Center"
                            HeightRequest="50" >
-                        <Entry Placeholder="Ingresa tu Contraseña"
+                        <Entry Placeholder="{x:Static resources:AppResources.Placeholder_Password}"
                                            x:Name="entryPassword"
                                            FontSize="Micro"
                                            Keyboard="Text"
@@ -64,8 +65,8 @@
 
                 <!-- Inicio Boton Login -->
                 <Button 
-                        Text="Iniciar sesión"
-                        Command="{Binding IniciarSeccionCommand}"
+                        Text="{x:Static resources:AppResources.Button_Login}"
+                        Command="{Binding LoginCommand}"
                         CornerRadius="10"
                         Padding="15"
                         FontSize="Small"

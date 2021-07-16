@@ -1,14 +1,13 @@
-﻿using System;
+﻿using AppCountrys.Models.Enumerator;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace AppCountrys.Models
 {
-    public enum MenuItemType
-    {
-        Browse,
-        About
-    }
+    /// <summary>
+    /// Modelode para el menu del master detail
+    /// </summary>
     public class HomeMenuItem
     {
         public MenuItemType Id { get; set; }

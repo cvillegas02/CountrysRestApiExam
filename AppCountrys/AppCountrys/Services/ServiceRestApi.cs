@@ -5,6 +5,8 @@ using AppCountrys.Models.Response;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -12,109 +14,234 @@ using System.Threading.Tasks;
 
 namespace AppCountrys.Services
 {
-    public class ServiceRestApi
+    /// <summary>
+    /// Servicio Client Rest Api
+    /// </summary>
+    public class RestClient : IRestClient
     {
+        private string _authToken;
 
-        public string Token { get; set; }
-
-        static ServiceRestApi defaultInstance = new ServiceRestApi();
-
-        public static ServiceRestApi DefaultServicio
+        public string Token 
+        {
+            set { _authToken = value; }
+            get { return _authToken; }
+        }
+        
+        private static readonly RestClient _instance = new RestClient();
+        
+        static RestClient()
+        {
+        }
+        
+        public static RestClient Instance
         {
             get
             {
-                return defaultInstance;
-            }
-            private set
-            {
-                defaultInstance = value;
+                return _instance;
             }
         }
-
-        HttpClient client;
-
-        public ServiceRestApi()
+        
+        private HttpClient GetClient(HttpClientHandler handler = null)
         {
-            client = new HttpClient();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.Timeout = TimeSpan.FromMinutes(1);
-        }
-
-        public async Task<BaseResponse<ResponseLogin>> ValidaUsuarioContrasena(RequestLogin pUser)
-        {
-            BaseResponse<ResponseLogin> result = null;
-            var uri = new Uri(string.Format(Configuration.URL_LOGIN));
-            var json = JsonConvert.SerializeObject(pUser);
-            HttpContent httpcontent = new StringContent(json, Encoding.UTF8, "application/json");
-
-            try
-                {
-                    var response = await client.PostAsync(uri, httpcontent);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        
-                        result = JsonConvert.DeserializeObject<BaseResponse<ResponseLogin>>(content);
-                        return result;
-                    }
-                    else
-                    {
-                        result = new BaseResponse<ResponseLogin>();
-                        result.code = -1;
-                        result.status = false;
-                        result.message = "Ocurrio un error en el sistema.";
-                    }
-                    
-                }
-                catch (Exception ex)
-                {
-                    result = new BaseResponse<ResponseLogin>();
-                    result.code = -1;
-                    result.status = false;
-                    result.message = "Ocurrio un error en el sistema.";
-                    result.technicaldetail = ex.InnerException.Message;
-
-                }
-            
-
-            return result;
-        }
-
-        public async Task<BaseResponse<List<Country>>> GetCountrys()
-        {
-            BaseResponse<List<Country>> result = null;
-            HttpResponseMessage response = null;
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
-
             try
             {
-                var uri = new Uri(string.Format(Configuration.URL_COUNTRYS));
-
-                response = await client.GetAsync(uri);
-                if (response.IsSuccessStatusCode)
-                {
-                    //obtenemos la Información encriptada
-                    var contentRes = await response.Content.ReadAsStringAsync();
-
-                    result = JsonConvert.DeserializeObject<BaseResponse<List<Country>>>(contentRes);
-
-                    return result;
-
-                }
-                else
-                {
-                    return new BaseResponse<List<Country>>() { status = false, code = -1, data = null, message = "Ocurrio un error al consultar." };
-
-                }
+                var client = handler == null ? new HttpClient() : new HttpClient(handler, true);
+                client.Timeout = TimeSpan.FromSeconds(360);
+                return client;
             }
             catch (Exception ex)
             {
-                return new BaseResponse<List<Country>>() { status = false, code = -1, data = null, message = ex.Message, technicaldetail = ex.InnerException.Message};
+                Debug.WriteLine("Error while Sending Request : " + ex.Message);
+            }
+            return null;
+        }
+        
+        private void Dispose()
+        {
+        }
+        
+        private Task<HttpResponseMessage> RequestAsync(HttpMethod method, string url, object payload = null)
+        {
 
-               
+            try
+            {
+
+                var request = PrepareRequest(method, url, payload);
+                return GetClient().SendAsync(request, HttpCompletionOption.ResponseContentRead);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error while Sending Request : " + ex.Message);
             }
 
+            //else
+            //    Application.Current.MainPage = new Views.HomePages.ErrorPage();
+            return null;
+
+        }
+        
+        private HttpRequestMessage PrepareRequest(HttpMethod method, string url, object payload)
+        {
+            try
+            {
+                var uri = PrepareUri(url);
+                var request = new HttpRequestMessage(method, uri);
+
+                if (!string.IsNullOrEmpty(_authToken))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", this._authToken);
+                }
+               
+                if (payload != null)
+                {
+                    var json = JsonConvert.SerializeObject(payload);
+                    request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                }
+                return request;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error while Sending Request : " + ex.Message);
+            }
+            return null;
+        }
+        
+        private Uri PrepareUri(string url)
+        {
+            return new Uri(url);
+        }
+
+        private readonly Action<HttpStatusCode, string> _defaultErrorHandler = (statusCode, body) =>
+        {
+            if (statusCode < HttpStatusCode.OK || statusCode >= HttpStatusCode.BadRequest)
+            {
+                Debug.WriteLine(string.Format("Request responded with status code={0}, response={1}", statusCode, body));
+
+            }
+        };
+
+        private void HandleIfErrorResponse(HttpStatusCode statusCode, string content, Action<HttpStatusCode, string> errorHandler = null)
+        {
+            if (errorHandler != null)
+            {
+                errorHandler(statusCode, content);
+            }
+            else
+            {
+                _defaultErrorHandler(statusCode, content);
+            }
+        }
+        
+        private T GetValue<T>(String value)
+        {
+            return (T)Convert.ChangeType(value, typeof(T));
+        }
+        
+        public string GetResponse { get; set; }
+        
+        public async Task<T> GetAsync<T>(string url, bool useAuthToken = false)
+        {
+            try
+            {
+
+                HttpResponseMessage response = await RequestAsync(HttpMethod.Get, url).ConfigureAwait(false);
+                GetResponse = response.ToString();
+                string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                HandleIfErrorResponse(response.StatusCode, content);
+                if (typeof(T) == typeof(string))
+                {
+                    return GetValue<T>(content);
+                }
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch (System.Net.WebException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error in GET Request :" + ex.Message);
+            }
+            return default(T);
+        }
+        
+        public async Task<T> PostAsync<T>(string url, object payload, bool useAuthToken = false)
+        {
+            try
+            {
+
+                HttpResponseMessage response = await RequestAsync(HttpMethod.Post, url, payload).ConfigureAwait(false);
+                string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                HandleIfErrorResponse(response.StatusCode, content);
+                if (typeof(T) == typeof(string))
+                {
+                    return GetValue<T>(content);
+                }
+                //#region Reset AuthToken
+                //if (useAuthToken && _authToken != default(Guid))
+                //    _authToken = default(Guid);
+                //#endregion
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine("Error in POST Request :" + ex.Message);
+            }
+            return default(T);
+        }
+        
+        public async Task<T> PutAsync<T>(string url, object payload, bool useAuthToken = false)
+        {
+            try
+            {
+
+                HttpResponseMessage response = await RequestAsync(HttpMethod.Put, url, payload).ConfigureAwait(false);
+                string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                HandleIfErrorResponse(response.StatusCode, content);
+                if (typeof(T) == typeof(string))
+                {
+                    return GetValue<T>(content);
+                }
+                //#region Reset AuthToken
+                //if (useAuthToken && _authToken != default(Guid))
+
+                //    _authToken = default(Guid);
+                //#endregion
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine("Error in PUT Request :" + ex.Message);
+            }
+            return default(T);
+        }
+
+        public async Task<T> DeleteAsync<T>(string url, bool useAuthToken = false)
+        {
+            try
+            {
+
+                HttpResponseMessage response = await RequestAsync(HttpMethod.Delete, url).ConfigureAwait(false);
+                string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                HandleIfErrorResponse(response.StatusCode, content);
+                if (typeof(T) == typeof(string))
+                {
+                    return GetValue<T>(content);
+                }
+                //#region Reset AuthToken
+                //if (useAuthToken && _authToken != default(Guid))
+                //    _authToken = default(Guid);
+                //#endregion
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine("Error in DELETE Request :" + ex.Message);
+            }
+            return default(T);
         }
 
     }
+
+
 }

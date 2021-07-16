@@ -4,6 +4,9 @@ using System.Text;
 
 namespace AppCountrys.Models.Response
 {
+    /// <summary>
+    /// Response de inicio de sesion
+    /// </summary>
     public class ResponseLogin
     {
         public string token { get; set; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CountrysRestApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace CountrysRestApi
 {
@@ -58,11 +60,35 @@ namespace CountrysRestApi
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
 
+            // Register the Swagger generator, defining one or more Swagger documents
+            services.AddSwaggerGen(swagger =>
+            {
+                var contact = new Contact() { Name = SwaggerConfiguration.ContactName, Url = SwaggerConfiguration.ContactUrl };
+                swagger.SwaggerDoc(SwaggerConfiguration.DocNameV1,
+                                   new Info
+                                   {
+                                       Title = SwaggerConfiguration.DocInfoTitle,
+                                       Version = SwaggerConfiguration.DocInfoVersion,
+                                       Description = SwaggerConfiguration.DocInfoDescription,
+                                       Contact = contact
+                                   }
+                                    );
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint(SwaggerConfiguration.EndpointUrl, SwaggerConfiguration.EndpointDescription);
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

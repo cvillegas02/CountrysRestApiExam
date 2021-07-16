@@ -4,6 +4,9 @@ using System.Text;
 
 namespace AppCountrys.Models.ModelsDB
 {
+    /// <summary>
+    /// Modelo de Pais
+    /// </summary>
     public class Country
     {
         public string alpha { get; set; }

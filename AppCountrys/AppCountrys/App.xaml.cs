@@ -15,12 +15,11 @@ namespace AppCountrys
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
+            ///Podemos injectar servicio Fake
+            DependencyService.Register<IRestClient,RestClient>();
 
-            MainPage = Navigator = new NavigationPage(new ucLogin());
-            //MainPage = new MainPage();
-
-
+            MainPage = Navigator = new NavigationPage(new LoginPage());
+            
         }
 
         protected override void OnStart()

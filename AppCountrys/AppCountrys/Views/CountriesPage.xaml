@@ -3,18 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:AppCountrys.Resx"
              mc:Ignorable="d"
-             x:Class="AppCountrys.Views.ItemsPage"
-             Title="{Binding Title}"
+             x:Class="AppCountrys.Views.CountriesPage"
+             Title="{x:Static resources:AppResources.Title_Countries}"
              x:Name="BrowseItemsPage">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Clicked="AddItem_Clicked" />
+        <ToolbarItem Text="{x:Static resources:AppResources.Add}" Command="{Binding AddCommand}"  />
     </ContentPage.ToolbarItems>
 
     <RefreshView IsRefreshing="{Binding IsBusy, Mode=TwoWay}" Command="{Binding LoadItemsCommand}">
         <CollectionView x:Name="ItemsCollectionView"
-                ItemsSource="{Binding Items}">
+                ItemsSource="{Binding ListCountry}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <StackLayout Padding="10">
@@ -29,7 +30,7 @@
                                 Style="{DynamicResource ListItemDetailTextStyle}"
                                 FontSize="13" />
                         <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnItemSelected"></TapGestureRecognizer>
+                            <TapGestureRecognizer NumberOfTapsRequired="1" Command="{Binding BindingContext.TapCountryCommand, Source={x:Reference BrowseItemsPage}}" CommandParameter="{Binding}"/>
                         </StackLayout.GestureRecognizers>
                     </StackLayout>
                 </DataTemplate>

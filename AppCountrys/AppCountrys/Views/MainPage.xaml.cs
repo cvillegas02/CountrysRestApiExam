@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 using AppCountrys.Models;
+using AppCountrys.Models.Enumerator;
 
 namespace AppCountrys.Views
 {
@@ -20,7 +21,7 @@ namespace AppCountrys.Views
 
             MasterBehavior = MasterBehavior.Popover;
 
-            MenuPages.Add((int)MenuItemType.Browse, (NavigationPage)Detail);
+            MenuPages.Add((int)MenuItemType.Country, (NavigationPage)Detail);
         }
 
         public async Task NavigateFromMenu(int id)
@@ -29,8 +30,8 @@ namespace AppCountrys.Views
             {
                 switch (id)
                 {
-                    case (int)MenuItemType.Browse:
-                        MenuPages.Add(id, new NavigationPage(new ItemsPage()));
+                    case (int)MenuItemType.Country:
+                        MenuPages.Add(id, new NavigationPage(new CountriesPage()));
                         break;
                 }
             }
